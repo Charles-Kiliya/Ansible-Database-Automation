@@ -2,21 +2,24 @@ pipeline {
     agent any
 
     stages {
-        stage('Build') {
+        stage('Checkout') {
             steps {
-                sh 'ansible-galaxy install -r requirements.yml'
-                sh 'ansible-playbook -i hosts -v playbook.yml'
+                // Cloner le référentiel Ansible
+                git 'https://github.com/votre-repo-ansible.git'
             }
         }
-        stage('Test') {
+        stage('Deploy Database') {
             steps {
-                sh 'ansible-playbook -i hosts -v playbook.yml --check'
+                // Exécuter le playbook Ansible pour déployer la base de données
+                sh 'ansible-playbook -i inventory playbook.yml'
             }
         }
-        stage('Deploy') {
+        stage('Monitor Database') {
             steps {
-                sh 'ansible-playbook -i hosts -v playbook.yml'
+                // Exécuter des tâches de surveillance de la base de données
+                sh 'ansible-playbook -i inventory monitor.yml'
             }
         }
     }
 }
+
